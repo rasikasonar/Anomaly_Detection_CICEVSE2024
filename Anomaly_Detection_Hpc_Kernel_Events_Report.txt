@@ -1,0 +1,216 @@
+╔══════════════════════════════════════════════════════════╗
+║  EVSE Kernel-Event Anomaly Detection — Pipeline Report  ║
+╚══════════════════════════════════════════════════════════╝
+
+MODEL USED: LSTMBinaryClassifier
+DECISION THRESHOLD (probability of attack): 0.9846863746643066
+SEQUENCE LENGTH (pinned): 30
+
+
+=================================================================
+  AGENT 1 — DATA PROFILING & FEATURE SELECTION
+=================================================================
+Dataset loaded of shape (6166, 915)
+
+Shape after dropping unnamed / interface / Attack columns: (6166, 909)
+
+Duplicate rows removed: 0
+Missing values in dataset: 0
+Label distribution:
+Label
+1    3864
+0    2302
+
+Scenario distribution (stratification key):
+Scenario
+Benign           2302
+Cryptojacking    1793
+Recon            1206
+DoS               865
+
+Zero-variance columns removed : 685
+
+Remaining feature columns     : 221
+
+
+Computing separation score done. Top-20 features by class separation score are
+
+
+                                mean_benign  mean_attack    separation
+fib_fib_table_lookup                    0.0   34589.5406  3.458954e+13
+net_netif_receive_skb                   0.0   13531.8802  1.353188e+13
+skb_consume_skb                         0.0   12651.4281  1.265143e+13
+net_netif_rx                            0.0    8189.8812  8.189881e+12
+net_netif_rx_ni_entry                   0.0    8189.4112  8.189411e+12
+net_netif_rx_ni_exit                    0.0    8189.4102  8.189410e+12
+net_napi_gro_receive_exit               0.0    5322.3641  5.322364e+12
+net_napi_gro_receive_entry              0.0    5322.3639  5.322364e+12
+tcp_tcp_send_reset                      0.0    1875.4151  1.875415e+12
+qdisc_qdisc_enqueue                     0.0    1103.7319  1.103732e+12
+syscalls_sys_enter_recvmsg              0.0      39.6467  3.964674e+10
+syscalls_sys_exit_recvmsg               0.0      39.6465  3.964648e+10
+skb_skb_copy_datagram_iovec             0.0      36.9410  3.694099e+10
+block_block_bio_queue                   0.0      26.2694  2.626941e+10
+block_block_bio_remap                   0.0      25.1082  2.510818e+10
+syscalls_sys_enter_sched_yield          0.0      16.8007  1.680072e+10
+syscalls_sys_exit_sched_yield           0.0      16.8007  1.680072e+10
+major-faults                            0.0      15.2648  1.526475e+10
+block_block_getrq                       0.0      13.1555  1.315554e+10
+block_block_rq_insert                   0.0      13.1090  1.310895e+10
+
+Highly correlated cols removed : 125
+
+
+Remaining columns.             : 96
+
+
+Total features ranked   : 96
+
+
+Features selected (top-60): 60
+
+
+Top-30 by Mutual Information:
+kmem_kfree                   0.447696
+bus_access_wr                0.446843
+node-stores                  0.445578
+context-switches             0.432030
+raw_syscalls_sys_enter       0.424976
+kmem_kmalloc                 0.423260
+kmem_kmem_cache_free         0.420217
+instructions                 0.419661
+cpu-cycles                   0.403421
+cache-references             0.386167
+syscalls_sys_enter_read      0.384746
+dsb_spec                     0.378236
+strex_fail_spec              0.348698
+syscalls_sys_exit_getpid     0.303593
+br_pred                      0.301222
+cache-misses                 0.298417
+branch-loads                 0.295719
+ase_spec                     0.294982
+dTLB-load-misses             0.293289
+kmem_mm_page_free            0.292066
+kmem_mm_page_alloc           0.282374
+qdisc_qdisc_dequeue          0.266082
+br_mis_pred                  0.265285
+cgroup-switches              0.264025
+l1d_cache_wr                 0.261617
+strex_pass_spec              0.257048
+net_net_dev_queue            0.256594
+branch-misses                0.255794
+kmem_mm_page_free_batched    0.253705
+branch-load-misses           0.251977
+
+
+=================================================================
+  AGENT 2 — FEATURE ENGINEERING & WINDOWING
+=================================================================
+
+Event rate ratio features added : 7
+
+Added features                : ['ratio_cache_miss_rate', 'ratio_branch_miss_rate', 'ratio_dtlb_miss_per_inst', 'ratio_itlb_miss_per_inst', 'ratio_br_mispred_rate', 'ratio_ctx_switch_per_cycle', 'ratio_ipc']
+
+Rolling window features added : 60
+
+
+Added features                : ['kmem_kfree_roll30_mean', 'kmem_kfree_roll30_std', 'kmem_kfree_roll30_max', 'bus_access_wr_roll30_mean', 'bus_access_wr_roll30_std', 'bus_access_wr_roll30_max', 'node-stores_roll30_mean', 'node-stores_roll30_std', 'node-stores_roll30_max', 'context-switches_roll30_mean', 'context-switches_roll30_std', 'context-switches_roll30_max', 'raw_syscalls_sys_enter_roll30_mean', 'raw_syscalls_sys_enter_roll30_std', 'raw_syscalls_sys_enter_roll30_max', 'kmem_kmalloc_roll30_mean', 'kmem_kmalloc_roll30_std', 'kmem_kmalloc_roll30_max', 'kmem_kmem_cache_free_roll30_mean', 'kmem_kmem_cache_free_roll30_std', 'kmem_kmem_cache_free_roll30_max', 'instructions_roll30_mean', 'instructions_roll30_std', 'instructions_roll30_max', 'cpu-cycles_roll30_mean', 'cpu-cycles_roll30_std', 'cpu-cycles_roll30_max', 'cache-references_roll30_mean', 'cache-references_roll30_std', 'cache-references_roll30_max', 'syscalls_sys_enter_read_roll30_mean', 'syscalls_sys_enter_read_roll30_std', 'syscalls_sys_enter_read_roll30_max', 'dsb_spec_roll30_mean', 'dsb_spec_roll30_std', 'dsb_spec_roll30_max', 'strex_fail_spec_roll30_mean', 'strex_fail_spec_roll30_std', 'strex_fail_spec_roll30_max', 'syscalls_sys_exit_getpid_roll30_mean', 'syscalls_sys_exit_getpid_roll30_std', 'syscalls_sys_exit_getpid_roll30_max', 'br_pred_roll30_mean', 'br_pred_roll30_std', 'br_pred_roll30_max', 'cache-misses_roll30_mean', 'cache-misses_roll30_std', 'cache-misses_roll30_max', 'branch-loads_roll30_mean', 'branch-loads_roll30_std', 'branch-loads_roll30_max', 'ase_spec_roll30_mean', 'ase_spec_roll30_std', 'ase_spec_roll30_max', 'dTLB-load-misses_roll30_mean', 'dTLB-load-misses_roll30_std', 'dTLB-load-misses_roll30_max', 'kmem_mm_page_free_roll30_mean', 'kmem_mm_page_free_roll30_std', 'kmem_mm_page_free_roll30_max']
+
+
+Lag features added : 30
+
+Added features     : ['kmem_kfree_lag1', 'kmem_kfree_lag3', 'kmem_kfree_lag5', 'bus_access_wr_lag1', 'bus_access_wr_lag3', 'bus_access_wr_lag5', 'node-stores_lag1', 'node-stores_lag3', 'node-stores_lag5', 'context-switches_lag1', 'context-switches_lag3', 'context-switches_lag5', 'raw_syscalls_sys_enter_lag1', 'raw_syscalls_sys_enter_lag3', 'raw_syscalls_sys_enter_lag5', 'kmem_kmalloc_lag1', 'kmem_kmalloc_lag3', 'kmem_kmalloc_lag5', 'kmem_kmem_cache_free_lag1', 'kmem_kmem_cache_free_lag3', 'kmem_kmem_cache_free_lag5', 'instructions_lag1', 'instructions_lag3', 'instructions_lag5', 'cpu-cycles_lag1', 'cpu-cycles_lag3', 'cpu-cycles_lag5', 'cache-references_lag1', 'cache-references_lag3', 'cache-references_lag5']
+
+
+
+=================================================================
+  AGENT 3 — LSTM BINARY CLASSIFIER DETECTION
+=================================================================
+Split strategy : stratified shuffle by Scenario
+Train : 4316 rows | Label dist {1: '2705 (62.7%)', 0: '1611 (37.3%)'}
+Val   : 925 rows | Label dist {1: '580 (62.7%)', 0: '345 (37.3%)'}
+Test  : 925 rows | Label dist {1: '579 (62.6%)', 0: '346 (37.4%)'}
+Train Scenario distribution: {'Benign': 1611, 'Cryptojacking': 1255, 'Recon': 844, 'DoS': 606}
+Val   Scenario distribution: {'Benign': 345, 'Cryptojacking': 269, 'Recon': 181, 'DoS': 130}
+Test  Scenario distribution: {'Benign': 346, 'Cryptojacking': 269, 'Recon': 181, 'DoS': 129}
+RobustScaler fit on train only; Feature dim per timestep: 157.
+Sequence length (pinned): 30
+LSTM Binary Classifier trained on benign+attack sequences: (4287, 30, 157)
+Training   sequence label distribution: {0: 1611, 1: 2676}
+Validation sequence label distribution: {0: 345, 1: 551}
+Test       sequence label distribution: {0: 346, 1: 550}
+class_weight: disabled (attacks are the majority class)
+Optimiser Adam(lr=0.0001), L2=1e-05, dropout=0.3
+EarlyStopping on val_auc, patience=8, restore_best_weights=True
+Trainable parameters: 69,793
+Training epochs: 33
+Final train loss: 0.013465
+Final val loss:   0.057181
+Best epoch (highest val_auc=0.9992): 25
+Final val_accuracy: 0.9877
+Final val_precision: 0.9856
+Final val_recall: 0.9946
+Final val_auc: 0.9959
+Predicted probability threshold 0.984686 optimised for f1
+Validation threshold optimisation completed. Val metrics: {'threshold': 0.984686, 'precision': 0.9963, 'recall': 0.9873, 'f1': 0.9918}
+F2-optimal (reference only) threshold=0.057848 precision=0.9769 recall=0.9964 F2=0.9924
+Test metrics: {'precision': 0.9981, 'recall': 0.9582, 'f1': 0.9777, 'roc_auc': 0.9996, 'pr_auc': 0.9997}
+False Negative Rate (missed attacks): 0.0418
+False Positive Rate (false alarms):   0.0029
+Classification Report:
+              precision    recall  f1-score   support
+
+      Benign     0.9375    0.9971    0.9664       346
+      Attack     0.9981    0.9582    0.9777       550
+
+    accuracy                         0.9732       896
+   macro avg     0.9678    0.9776    0.9721       896
+weighted avg     0.9747    0.9732    0.9734       896
+
+
+
+=================================================================
+  METRICS SUMMARY
+=================================================================
+-----------------------------------------------------------------
+  VALIDATION METRICS (threshold selection)
+-----------------------------------------------------------------
+  Optimal threshold : 0.984686
+  Precision         : 0.9963
+  Recall            : 0.9873
+  F1                : 0.9918
+
+-----------------------------------------------------------------
+  TEST METRICS (held-out set)
+-----------------------------------------------------------------
+  Precision         : 0.9981
+  Recall            : 0.9582
+  F1                : 0.9777
+  AUC-ROC           : 0.9996
+  AUC-PR            : 0.9997
+
+-----------------------------------------------------------------
+  PER-CLASS CLASSIFICATION REPORT (TEST)
+-----------------------------------------------------------------
+              precision    recall  f1-score   support
+
+      Benign     0.9375    0.9971    0.9664       346
+      Attack     0.9981    0.9582    0.9777       550
+
+    accuracy                         0.9732       896
+   macro avg     0.9678    0.9776    0.9721       896
+weighted avg     0.9747    0.9732    0.9734       896
+
+
+-----------------------------------------------------------------
+  CONFUSION MATRIX (TEST)
+-----------------------------------------------------------------
+                 Predicted
+                 Benign   Attack
+Actual Benign       345        1
+Actual Attack        23      527
+
+-----------------------------------------------------------------
+  FLAGGED EVENTS (test set)
+-----------------------------------------------------------------
+  Total anomalies flagged: 528

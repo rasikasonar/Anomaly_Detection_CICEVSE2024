@@ -1,0 +1,111 @@
+    ╔══════════════════════════════════════════════════════════╗
+    ║       EVSE Anomaly Detection — Pipeline Report          ║
+    ╚══════════════════════════════════════════════════════════╝
+
+    MODEL USED: LSTMBinaryClassifier
+    DECISION THRESHOLD (probability of attack): 0.8192347884178162
+    SEQUENCE LENGTH (pinned): 30
+
+    ── PREPROCESSING LOG ──────────────────────────────────────
+    Loaded 115298 rows × 10 columns.
+
+
+Columns: ['time', 'shunt_voltage', 'bus_voltage_V', 'current_mA', 'power_mW', 'State', 'Attack', 'Attack-Group', 'Label', 'interface']
+
+
+Missing values:
+time             0
+shunt_voltage    0
+bus_voltage_V    0
+current_mA       0
+power_mW         0
+State            0
+Attack           0
+Attack-Group     0
+Label            0
+interface        0
+No unnamed columns to drop
+Duplicate rows removed: 1100
+Feature bus_voltage_V has 0 negative values (expected 0)
+Feature current_mA has 0 negative values (expected 0)
+Feature power_mW has 0 negative values (expected 0)
+Feature shunt_voltage has 0 negative values (expected 0)
+Missing values in dataset 0
+
+Label distribution after target variable encoding:
+Label
+1    99898
+0    14300
+clean_and_validate: done
+There are no rows having more than 60 records per minute
+
+    ── FEATURE ENGINEERING LOG ────────────────────────────────
+    derive_power_features: added ['expected_power_mW', 'power_residual', 'power_residual_abs', 'power_to_current_ratio', 'power_to_voltage_ratio']
+derive_lag_and_diff_features: added 35 features
+derive_rolling_features: added 12 features
+Encoded categorical columns into numerical: ['State', 'interface']
+Non numeric columns left after feature engineering: []
+finalise_feature_set: 97 features, 114193 rows
+feature columns: ['shunt_voltage', 'bus_voltage_V', 'current_mA', 'power_mW', 'expected_power_mW', 'power_residual', 'power_residual_abs', 'power_to_current_ratio', 'power_to_voltage_ratio', 'shunt_voltage_lag_1', 'shunt_voltage_lag_2', 'shunt_voltage_lag_5', 'shunt_voltage_diff_1', 'shunt_voltage_abs_diff_1', 'shunt_voltage_diff_2', 'shunt_voltage_abs_diff_2', 'bus_voltage_V_lag_1', 'bus_voltage_V_lag_2', 'bus_voltage_V_lag_5', 'bus_voltage_V_diff_1', 'bus_voltage_V_abs_diff_1', 'bus_voltage_V_diff_2', 'bus_voltage_V_abs_diff_2', 'current_mA_lag_1', 'current_mA_lag_2', 'current_mA_lag_5', 'current_mA_diff_1', 'current_mA_abs_diff_1', 'current_mA_diff_2', 'current_mA_abs_diff_2', 'power_mW_lag_1', 'power_mW_lag_2', 'power_mW_lag_5', 'power_mW_diff_1', 'power_mW_abs_diff_1', 'power_mW_diff_2', 'power_mW_abs_diff_2', 'power_residual_lag_1', 'power_residual_lag_2', 'power_residual_lag_5', 'power_residual_diff_1', 'power_residual_abs_diff_1', 'power_residual_diff_2', 'power_residual_abs_diff_2', 'bus_voltage_V_roll_mean_5', 'bus_voltage_V_roll_std_5', 'bus_voltage_V_roll_min_5', 'bus_voltage_V_roll_max_5', 'bus_voltage_V_roll_mean_10', 'bus_voltage_V_roll_std_10', 'bus_voltage_V_roll_min_10', 'bus_voltage_V_roll_max_10', 'bus_voltage_V_roll_mean_30', 'bus_voltage_V_roll_std_30', 'bus_voltage_V_roll_min_30', 'bus_voltage_V_roll_max_30', 'current_mA_roll_mean_5', 'current_mA_roll_std_5', 'current_mA_roll_min_5', 'current_mA_roll_max_5', 'current_mA_roll_mean_10', 'current_mA_roll_std_10', 'current_mA_roll_min_10', 'current_mA_roll_max_10', 'current_mA_roll_mean_30', 'current_mA_roll_std_30', 'current_mA_roll_min_30', 'current_mA_roll_max_30', 'power_mW_roll_mean_5', 'power_mW_roll_std_5', 'power_mW_roll_min_5', 'power_mW_roll_max_5', 'power_mW_roll_mean_10', 'power_mW_roll_std_10', 'power_mW_roll_min_10', 'power_mW_roll_max_10', 'power_mW_roll_mean_30', 'power_mW_roll_std_30', 'power_mW_roll_min_30', 'power_mW_roll_max_30', 'power_residual_roll_mean_5', 'power_residual_roll_std_5', 'power_residual_roll_min_5', 'power_residual_roll_max_5', 'power_residual_roll_mean_10', 'power_residual_roll_std_10', 'power_residual_roll_min_10', 'power_residual_roll_max_10', 'power_residual_roll_mean_30', 'power_residual_roll_std_30', 'power_residual_roll_min_30', 'power_residual_roll_max_30', 'State_charging', 'State_idle', 'interface_any', 'interface_none', 'interface_ocpp']
+
+    ── DETECTION LOG ──────────────────────────────────────────
+    Split strategy : stratified shuffle by Attack-Group
+Train : 79935 rows | Label dist {1: '69925 (87.5%)', 0: '10010 (12.5%)'}
+Val   : 17129 rows | Label dist {1: '14984 (87.5%)', 0: '2145 (12.5%)'}
+Test  : 17129 rows | Label dist {1: '14984 (87.5%)', 0: '2145 (12.5%)'}
+Train Attack-Group distribution: {'DoS': 24147, 'recon': 22898, 'host-attack': 22880, 'none': 10010}
+Val   Attack-Group distribution: {'DoS': 5174, 'recon': 4907, 'host-attack': 4903, 'none': 2145}
+Test  Attack-Group distribution: {'DoS': 5175, 'recon': 4907, 'host-attack': 4902, 'none': 2145}
+RobustScaler fit on train only; val/test transformed.
+Sequence length (pinned): 30
+LSTM Binary Classifier trained on benign+attack sequences: (79906, 30, 97)
+Training   sequence label distribution: {0: 10010, 1: 69896}
+Validation sequence label distribution: {0: 2145, 1: 14955}
+Test       sequence label distribution: {0: 2145, 1: 14955}
+class_weight: disabled (attacks are the majority class)
+Optimiser Adam(lr=0.0001), L2=1e-05, dropout=0.3
+EarlyStopping on val_auc, patience=8, restore_best_weights=True
+Training epochs: 13
+Final train loss: 0.002731
+Final val loss:   0.013653
+Best epoch (highest val_auc=0.9985): 5
+Final val_accuracy: 0.9985
+Final val_precision: 0.9987
+Final val_recall: 0.9996
+Final val_auc: 0.9962
+Predicted probability threshold 0.819235 optimised for f1
+Validation threshold optimisation completed. Val metrics: {'threshold': 0.819235, 'precision': 0.9991, 'recall': 0.9991, 'f1': 0.9991}
+Evaluation completed on test dataset. Test metrics: {'precision': 0.9993, 'recall': 0.9987, 'f1': 0.999, 'roc_auc': 0.9998, 'pr_auc': 1.0}
+
+    ── VALIDATION METRICS ─────────────────────────────────────
+    Precision : 0.9991
+    Recall    : 0.9991
+    F1        : 0.9991
+
+    ── TEST METRICS ───────────────────────────────────────────
+    Precision : 0.9993
+    Recall    : 0.9987
+    F1        : 0.999
+    ROC-AUC   : 0.9998
+    PR-AUC    : 1.0
+
+    ── PER-CLASS CLASSIFICATION REPORT (TEST) ─────────────────
+                  precision    recall  f1-score   support
+
+      Benign     0.9912    0.9949    0.9930      2145
+      Attack     0.9993    0.9987    0.9990     14955
+
+    accuracy                         0.9982     17100
+   macro avg     0.9952    0.9968    0.9960     17100
+weighted avg     0.9982    0.9982    0.9982     17100
+
+
+    ── CONFUSION MATRIX (TEST) ────────────────────────────────
+                     Predicted
+                 Benign   Attack
+Actual Benign      2134       11
+Actual Attack        19    14936
+
+    ── FLAGGED EVENTS (test set) ──────────────────────────────
+    Total anomalies flagged: 14947
+

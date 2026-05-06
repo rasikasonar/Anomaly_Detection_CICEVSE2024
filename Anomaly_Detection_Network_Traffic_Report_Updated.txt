@@ -1,0 +1,104 @@
+
+======================================================================
+  AGENT 1 — DATA PREPROCESSING
+======================================================================
+Loaded files from Dataset_for_masters_thesis/CICEVSE2024_Dataset/Network_Traffic/EVSE-A/csv & Dataset_for_masters_thesis/CICEVSE2024_Dataset/Network_Traffic/EVSE-B/csv. Total files combined are 59
+shape (2744700, 90)
+dtype_distribution {'int64': 63, 'float64': 12, 'str': 10, 'object': 5}
+label_distribution {1: 2744618, 0: 82}
+attack_class_count {'maliciousev syn stealth scan': 228001, 'charging syn stealth': 222097, 'charging port scan': 177409, 'charging service detection scan': 165171, 'maliciousev port scan': 158013, 'charging syn flood': 131106, 'idle tcp flood': 131104, 'charging push ack flood': 131095, 'idle syn flood': 131090, 'charging tcp flood': 131090, 'charging vulnerability scan': 119236, 'maliciousev service detection': 87089, 'idle syn stealth scan': 80848, 'idle port scan': 78145, 'charging os fingerprinting': 72735, 'idle push ack flood': 65559, 'charging synonymous ip': 65548, 'idle synonymous ip flood': 65546, 'charging synonymous ip flood': 65546, 'idle synonymous ip': 65545, 'maliciousev vulnerability scan': 57058, 'idle vulnerability scan': 55073, 'idle os fingerprinting': 49279, 'charging aggressive scan': 47871, 'idle aggressive scan': 38290, 'idle service detection': 36967, 'maliciousev os fingerprinting': 18259, 'charging udp flood': 16375, 'maliciousev aggressive scan': 16361, 'idle udp flood': 16100, 'charging portscan': 8117, 'idle portscan': 4975, 'charging service detection': 3629, 'idle slowloris scan': 2235, 'charging slowloris scan': 1966, 'idle benign': 68, 'charging icmp flood': 32, 'idle icmp flood': 30, 'idle icmp fragmentation': 17, 'charging benign': 14, 'charging icmp fragmentation': 11}
+total_missing_values 13720901
+unique_capture_files (groups) 59
+Collapsed Attack_Label: 41 → 17 attack types (state prefix stripped).
+New attack-type row distribution: {'syn stealth scan': 530946, 'port scan': 426659, 'syn flood': 262196, 'tcp flood': 262194, 'vulnerability scan': 231367, 'push ack flood': 196654, 'service detection scan': 165171, 'os fingerprinting': 140273, 'synonymous ip': 131093, 'synonymous ip flood': 131092, 'service detection': 127685, 'aggressive scan': 102522, 'udp flood': 32475, 'slowloris scan': 4201, 'benign': 82, 'icmp flood': 62, 'icmp fragmentation': 28}
+Capture files per attack type: {'aggressive scan': 5, 'os fingerprinting': 5, 'syn stealth scan': 5, 'port scan': 5, 'vulnerability scan': 5, 'service detection': 4, 'syn flood': 4, 'tcp flood': 4, 'udp flood': 4, 'icmp fragmentation': 3, 'push ack flood': 3, 'icmp flood': 3, 'benign': 2, 'slowloris scan': 2, 'synonymous ip': 2, 'synonymous ip flood': 2, 'service detection scan': 1}
+Aggregated scan family: 17 -> 11 attack types (7 scan sub-types collapsed into 'scan').
+Post-aggregation row distribution: {'scan': 1724623, 'syn flood': 262196, 'tcp flood': 262194, 'push ack flood': 196654, 'synonymous ip': 131093, 'synonymous ip flood': 131092, 'udp flood': 32475, 'slowloris scan': 4201, 'benign': 82, 'icmp flood': 62, 'icmp fragmentation': 28}
+Post-aggregation capture files per class: {'scan': 30, 'syn flood': 4, 'tcp flood': 4, 'udp flood': 4, 'icmp flood': 3, 'icmp fragmentation': 3, 'push ack flood': 3, 'benign': 2, 'slowloris scan': 2, 'synonymous ip': 2, 'synonymous ip flood': 2}
+High-missing columns (>5%): ['requested_server_name', 'client_fingerprint', 'server_fingerprint', 'user_agent', 'content_type']
+Shape of dataframe after handling missing values (2744700, 86)
+Dropped leaky/identifier columns (18): ['id', 'expiration_id', 'bidirectional_first_seen_ms', 'bidirectional_last_seen_ms', 'src2dst_first_seen_ms', 'src2dst_last_seen_ms', 'dst2src_first_seen_ms', 'dst2src_last_seen_ms', 'src_port', 'src_ip', 'src_mac', 'dst_ip', 'dst_mac', 'src_oui', 'dst_oui', 'ip_version', 'vlan_id', 'tunnel_id']
+Shape of dataframe after dropping leaky columns (2744700, 68)
+Non numeric columns in the dataset ['application_name', 'application_category_name', 'Attack_Label', 'Source_File', 'Attack_Label_Original']
+One-hot encoding columns ['application_name', 'application_category_name']
+Distribution of non numeric columns in dataset {'application_name': 66, 'application_category_name': 18}
+Shape after encoding non numerical columns (2744700, 150)
+
+
+======================================================================
+  AGENT 2 — FEATURE SELECTION
+======================================================================
+Features before variance threshold: 145
+87 features dropped by variance threshold 0.01
+Dropped features: ['bidirectional_cwr_packets', 'bidirectional_ece_packets', 'bidirectional_urg_packets', 'src2dst_cwr_packets', 'src2dst_ece_packets', 'src2dst_urg_packets', 'src2dst_fin_packets', 'dst2src_cwr_packets', 'dst2src_ece_packets', 'dst2src_urg_packets', 'dst2src_fin_packets', 'application_name_AFP', 'application_name_AJP', 'application_name_BGP', 'application_name_CiscoSkinny', 'application_name_CiscoVPN', 'application_name_Citrix', 'application_name_DHCP', 'application_name_DNP3', 'application_name_DNS', 'application_name_DNS.Apple', 'application_name_DNS.UbuntuONE', 'application_name_FTP_CONTROL', 'application_name_FTP_DATA', 'application_name_Git', 'application_name_H323', 'application_name_HTTP.Microsoft', 'application_name_HTTP.UbuntuONE', 'application_name_HTTP_Proxy', 'application_name_ICMP', 'application_name_ICMPV6', 'application_name_IGMP', 'application_name_IMAP', 'application_name_IMAPS', 'application_name_IMO', 'application_name_IPSec', 'application_name_Kerberos', 'application_name_LDAP', 'application_name_LotusNotes', 'application_name_MDNS', 'application_name_Mining', 'application_name_MsSQL-TDS', 'application_name_MySQL', 'application_name_NFS', 'application_name_NTP', 'application_name_NetBIOS', 'application_name_OSPF', 'application_name_Oracle', 'application_name_POP3', 'application_name_POPS', 'application_name_PostgreSQL', 'application_name_RDP', 'application_name_RPC', 'application_name_RSYNC', 'application_name_RTMP', 'application_name_RTSP', 'application_name_Radius', 'application_name_SIP', 'application_name_SMBv23', 'application_name_SMTP', 'application_name_SMTPS', 'application_name_SOCKS', 'application_name_SSDP', 'application_name_Starcraft', 'application_name_Syslog', 'application_name_TLS', 'application_name_TargusDataspeed', 'application_name_Telnet', 'application_name_TiVoConnect', 'application_name_VMware', 'application_name_VNC', 'application_name_WebSocket', 'application_name_Whois-DAS', 'application_category_name_Cloud', 'application_category_name_Collaborative', 'application_category_name_DataTransfer', 'application_category_name_Database', 'application_category_name_Download', 'application_category_name_Email', 'application_category_name_IoT-Scada', 'application_category_name_Media', 'application_category_name_Mining', 'application_category_name_Network', 'application_category_name_RPC', 'application_category_name_System', 'application_category_name_VPN', 'application_category_name_VoIP']
+Features after variance threshold: 58
+Features dropped by correlation filter 22
+Dropped correlated features: ['src2dst_duration_ms', 'src2dst_packets', 'src2dst_bytes', 'dst2src_bytes', 'bidirectional_max_ps', 'src2dst_min_ps', 'dst2src_mean_ps', 'dst2src_stddev_ps', 'src2dst_mean_piat_ms', 'src2dst_max_piat_ms', 'bidirectional_psh_packets', 'src2dst_syn_packets', 'src2dst_ack_packets', 'src2dst_psh_packets', 'dst2src_syn_packets', 'dst2src_ack_packets', 'dst2src_psh_packets', 'application_name_Unknown', 'application_category_name_Game', 'application_category_name_RemoteAccess', 'application_category_name_Unspecified', 'application_category_name_Web']
+Features after correlation filter: 36
+Final shape: (2744700, 36)
+
+
+======================================================================
+  AGENT 3 — ANOMALY CLASS DETECTION
+======================================================================
+No singleton-file classes to drop.
+ Train     : 1,486,530 rows (54.2%) | 31 capture files | 11 classes
+ Validation: 489,815 rows (17.8%) | 12 capture files | 7 classes
+ Test      : 768,355 rows (28.0%) | 16 capture files | 11 classes
+ Classes encoded: 11
+Per-class capture-file distribution:
+split                train  val  test
+cls                                  
+benign                   1    0     1
+icmp flood               1    1     1
+icmp fragmentation       1    1     1
+push ack flood           1    1     1
+scan                    18    6     6
+slowloris scan           1    0     1
+syn flood                2    1     1
+synonymous ip            1    0     1
+synonymous ip flood      1    0     1
+tcp flood                2    1     1
+udp flood                2    1     1
+RobustScaler fitted on X_train and applied to X_val / X_test
+Training LightGBM (11-class) on 1,486,530 samples × 36 features...
+Training complete. Best iteration: 38
+Model parameters: n_estimators=500, lr=0.05, num_leaves=31, min_child_samples=100, class_weight=None
+Accuracy    : 0.7073
+Weighted F1 : 0.6838
+Macro F1    : 0.3833
+Classes present in y_test : 11 / 11
+Classes trained but absent from test: none
+Per-class report:
+                     precision    recall  f1-score   support
+
+             benign       0.00      0.00      0.00        14
+         icmp flood       0.00      0.00      0.00        30
+ icmp fragmentation       0.00      0.00      0.00         5
+     push ack flood       0.73      0.65      0.68     65559
+               scan       0.89      1.00      0.94    430294
+     slowloris scan       0.93      0.43      0.58      2235
+          syn flood       0.11      0.16      0.13     65548
+      synonymous ip       0.00      0.00      0.00     65548
+synonymous ip flood       0.15      0.00      0.00     65546
+          tcp flood       1.00      0.78      0.88     65547
+          udp flood       1.00      1.00      1.00      8029
+
+           accuracy                           0.71    768355
+          macro avg       0.44      0.36      0.38    768355
+       weighted avg       0.68      0.71      0.68    768355
+
+Attack classes with recall < 0.50: ['benign', 'icmp flood', 'icmp fragmentation', 'slowloris scan', 'syn flood', 'synonymous ip', 'synonymous ip flood']
+Confidence threshold : 0.6
+Low-confidence predictions : 51,914 (6.76% of test set)
+Low-confidence breakdown by true class:
+  syn flood                                     51,712
+  push ack flood                                   170
+  tcp flood                                          8
+  udp flood                                          5
+  synonymous ip                                      4
+  scan                                               4
+  icmp fragmentation                                 3
+  synonymous ip flood                                3
+  icmp flood                                         3
+  benign                                             2
